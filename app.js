@@ -1,8 +1,8 @@
 const express = require("express");
 const cors = require("cors");
-const authRouter = require("./routes/auth.route");
+const authRouter = require("./src/routes/user.route");
 const bodyParser = require("body-parser");
-require("./middlewares/passport");
+require("./src/middlewares/passport");
 
 const app = express();
 const PORT = process.env.PORT || 8080;

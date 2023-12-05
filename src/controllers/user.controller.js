@@ -27,7 +27,7 @@ exports.signup = async (req, res) => {
   const newUser = new User({ fullName, email, password });
   const savedUser = await newUser.save().catch((err) => {
     console.log("Error: ", err);
-    res.status(500).json({ 
+    res.status(500).json({
       status: 'failed',
       requestAt: new Date().toISOString(),
       error: "Cannot register user at the moment!"
@@ -35,10 +35,10 @@ exports.signup = async (req, res) => {
   });
 
   if (savedUser) {
-    res.status(201).json({ 
+    res.status(201).json({
       status: 'success',
       requestAt: new Date().toISOString(),
-      message: "User was registered successfully!" 
+      message: "User was registered successfully!"
     });
   };
 
@@ -85,16 +85,24 @@ exports.signin = async (req, res) => {
   );
 
   const data = {
-    id : userWithEmail.id,
-    name : userWithEmail.fullName,
-    email : userWithEmail.email
+    id: userWithEmail.id,
+    name: userWithEmail.fullName,
+    email: userWithEmail.email
   }
 
-  res.status(200).json({ 
+  res.status(200).json({
     status: 'success',
     requestAt: new Date().toISOString(),
     message: "logged in successfully",
     token: jwtToken,
     data
-    });
+  });
+};
+
+exports.logout = async (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    requestAt: new Date().toISOString(),
+    message: "User has been logged out successfully"
+  });
 };

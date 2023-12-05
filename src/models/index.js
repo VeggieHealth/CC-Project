@@ -18,22 +18,18 @@ if (config.use_env_variable) {
     config.password,
     {
       dialect: 'mysql',
-      host: '/cloudsql/adhaar-351813:us-central1:adhaar-sql',
+      host: 'localhost', // Ganti dengan host database lokal Anda untuk lingkungan pengembangan
       pool: {
         max: 5,
         min: 0,
         acquire: 30000,
         idle: 10000
       },
-      dialectOptions: {
-        socketPath: '/cloudsql/adhaar-351813:us-central1:adhaar-sql'
-      },
       logging: false,
       operatorsAliases: false
     }
   );
 }
-
 
 fs.readdirSync(__dirname)
   .filter((file) => {
