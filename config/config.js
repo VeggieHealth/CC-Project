@@ -1,19 +1,19 @@
-require('dotenv').config({ path: './.env' }); // Memuat konfigurasi dari file .env
-const mysql = require('mysql');
+require('dotenv').config({ path: './.env' });
+const { Sequelize } = require('sequelize');
 
-const connection = mysql.createConnection({
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
     host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    dialect: 'mysql',
+    port: process.env.DB_PORT,
 });
 
-connection.connect((err) => {
-    if (err) {
-        console.error('Error connecting to database:', err);
-        return;
+(async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('Connection to the database has been established successfully.');
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
     }
-    console.log('Connected to MySQL database');
-});
+})();
 
-module.exports = connection;
+module.exports = sequelize;

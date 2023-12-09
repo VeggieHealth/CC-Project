@@ -1,24 +1,23 @@
-const db = require('../config/config.js');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/config');
 
-class User {
-    static createUser(userData, callback) {
-        const { username, email, password } = userData; // Ubah ke name
-        db.query('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', [username, email, password], (err, result) => {
-            if (err) {
-                return callback(err, null);
-            }
-            return callback(null, result);
-        });
-    }
-
-    static getUserByEmail(email, callback) {
-        db.query('SELECT * FROM users WHERE email = ?', [email], (err, result) => {
-            if (err) {
-                return callback(err, null);
-            }
-            return callback(null, result[0]);
-        });
-    }
-}
+const User = sequelize.define('User', {
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    // Tambahkan kolom lain jika diperlukan
+}, {
+    timestamps: false, // Menonaktifkan timestamps
+});
 
 module.exports = User;
