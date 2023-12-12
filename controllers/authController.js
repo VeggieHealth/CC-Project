@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
+const Token = require('../models/token'); // Import model Token
+const { verifyToken } = require('../middlewares/authMiddleware');
 
 exports.register = async (req, res) => {
     const { username, email, password } = req.body;
@@ -30,6 +32,7 @@ exports.register = async (req, res) => {
             process.env.SECRET_KEY,
             { expiresIn: '1h' }
         );
+        await Token.create({ token, userId: newUser.id });
 
         return res.status(200).json({
             status: true,
@@ -71,7 +74,7 @@ exports.login = async (req, res) => {
             process.env.SECRET_KEY,
             { expiresIn: '1h' }
         );
-
+        await Token.create({ token, userId: user.id });
         return res.status(200).json({
             status: true,
             message: 'login success',
@@ -85,3 +88,9 @@ exports.login = async (req, res) => {
         return res.status(500).json({ status: false, message: 'Internal Server Error' });
     }
 };
+
+exports.securedRoute = (req, res) => {
+    res.status(200).json({ message: 'This route is protected' });
+};
+
+exports.verifyTokenMiddleware = verifyToken;
