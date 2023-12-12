@@ -1,10 +1,13 @@
 require('dotenv').config({ path: './.env' });
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
-    host: process.env.DB_HOST,
+const sequelize = new Sequelize({
     dialect: 'mysql',
-    port: process.env.DB_PORT,
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    host: process.env.DB_HOST, // Ganti dengan IP address Cloud SQL Anda
+    port: process.env.DB_PORT, // Ganti dengan port Cloud SQL Anda
 });
 
 (async () => {

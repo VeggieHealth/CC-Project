@@ -1,5 +1,5 @@
 # Gunakan image node.js versi terbaru sebagai base image
-FROM node:latest
+FROM node:18
 
 # Buat direktori kerja di dalam container
 WORKDIR /usr/app
@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Port yang akan di-expose
-EXPOSE 3000
+EXPOSE 8080
 
 # Perintah untuk menjalankan aplikasi ketika container dijalankan
 CMD ["npm", "start"]
