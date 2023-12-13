@@ -52,7 +52,7 @@ exports.register = async (req, res) => {
                 email: email,
             },
             process.env.SECRET_KEY, {
-                expiresIn: '120s'
+                expiresIn: '60d'
             }
         );
         await Token.create({
@@ -116,7 +116,7 @@ exports.login = async (req, res) => {
                 email: user.email,
             },
             process.env.SECRET_KEY, {
-                expiresIn: '120s'
+                expiresIn: '60d'
             }
         );
         await Token.create({
