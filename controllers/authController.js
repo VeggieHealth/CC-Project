@@ -2,37 +2,63 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const Token = require('../models/token'); // Import model Token
-const { verifyToken } = require('../middlewares/authMiddleware');
+const {
+    verifyToken
+} = require('../middlewares/authMiddleware');
 
 exports.register = async (req, res) => {
-    const { username, email, password } = req.body;
+    const {
+        username,
+        email,
+        password
+    } = req.body;
 
     try {
         if (!username || !email || !password) {
-            return res.status(400).json({ status: false, message: 'invalid request argument' });
+            return res.status(400).json({
+                status: false,
+                message: 'invalid request argument'
+            });
         }
 
         if (password.length < 8 || !/^[\x20-\x7E]*$/.test(password)) {
-            return res.status(400).json({ status: false, message: 'invalid password' });
+            return res.status(400).json({
+                status: false,
+                message: 'invalid password'
+            });
         }
 
-        const existingUserByEmail = await User.findOne({ where: { email } });
+        const existingUserByEmail = await User.findOne({
+            where: {
+                email
+            }
+        });
         if (existingUserByEmail) {
-            return res.status(409).json({ status: false, message: 'email is already exist' });
+            return res.status(409).json({
+                status: false,
+                message: 'email is already exist'
+            });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await User.create({ username, email, password: hashedPassword });
+        const newUser = await User.create({
+            username,
+            email,
+            password: hashedPassword
+        });
 
-        const token = jwt.sign(
-            {
+        const token = jwt.sign({
                 userId: newUser.id,
                 email: email,
             },
-            process.env.SECRET_KEY,
-            { expiresIn: '1h' }
+            process.env.SECRET_KEY, {
+                expiresIn: '120s'
+            }
         );
-        await Token.create({ token, userId: newUser.id });
+        await Token.create({
+            token,
+            userId: newUser.id
+        });
 
         return res.status(200).json({
             status: true,
@@ -44,37 +70,59 @@ exports.register = async (req, res) => {
             },
         });
     } catch (error) {
-        return res.status(500).json({ status: false, message: 'Internal Server Error' });
+        return res.status(500).json({
+            status: false,
+            message: 'Internal Server Error'
+        });
     }
 };
 
 exports.login = async (req, res) => {
-    const { email, password } = req.body;
+    const {
+        email,
+        password
+    } = req.body;
 
     try {
         if (!email || !password) {
-            return res.status(400).json({ status: false, message: 'invalid request argument' });
+            return res.status(400).json({
+                status: false,
+                message: 'invalid request argument'
+            });
         }
 
-        const user = await User.findOne({ where: { email } });
+        const user = await User.findOne({
+            where: {
+                email
+            }
+        });
         if (!user) {
-            return res.status(401).json({ status: false, message: 'invalid email' });
+            return res.status(401).json({
+                status: false,
+                message: 'invalid email'
+            });
         }
 
         const result = await bcrypt.compare(password, user.password);
         if (!result) {
-            return res.status(401).json({ status: false, message: 'invalid password' });
+            return res.status(401).json({
+                status: false,
+                message: 'invalid password'
+            });
         }
 
-        const token = jwt.sign(
-            {
+        const token = jwt.sign({
                 userId: user.id,
                 email: user.email,
             },
-            process.env.SECRET_KEY,
-            { expiresIn: '1h' }
+            process.env.SECRET_KEY, {
+                expiresIn: '120s'
+            }
         );
-        await Token.create({ token, userId: user.id });
+        await Token.create({
+            token,
+            userId: user.id
+        });
         return res.status(200).json({
             status: true,
             message: 'login success',
@@ -85,12 +133,17 @@ exports.login = async (req, res) => {
             },
         });
     } catch (error) {
-        return res.status(500).json({ status: false, message: 'Internal Server Error' });
+        return res.status(500).json({
+            status: false,
+            message: 'Internal Server Error'
+        });
     }
 };
 
 exports.securedRoute = (req, res) => {
-    res.status(200).json({ message: 'This route is protected' });
+    res.status(200).json({
+        message: 'This route is protected'
+    });
 };
 
 exports.verifyTokenMiddleware = verifyToken;

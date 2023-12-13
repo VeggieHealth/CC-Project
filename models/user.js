@@ -1,4 +1,6 @@
-const { DataTypes } = require('sequelize');
+const {
+    DataTypes
+} = require('sequelize');
 const sequelize = require('../config/config');
 
 const User = sequelize.define('User', {
@@ -15,9 +17,16 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    // Tambahkan kolom lain jika diperlukan
+    description: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    avatar: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
 }, {
-    timestamps: false, // Menonaktifkan timestamps
+    timestamps: false,
 });
 
 module.exports = User;

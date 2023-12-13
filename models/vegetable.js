@@ -1,5 +1,7 @@
 const sequelize = require('../config/config.js');
-const { DataTypes } = require('sequelize');
+const {
+    DataTypes
+} = require('sequelize');
 
 
 const Vegetable = sequelize.define('Vegetable', {

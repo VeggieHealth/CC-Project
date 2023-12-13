@@ -4,7 +4,10 @@ exports.predictImage = async (req, res) => {
     try {
         // Pastikan data gambar ada dalam request
         if (!req.body || !req.body.image) {
-            return res.status(400).json({ status: false, message: 'Invalid image data' });
+            return res.status(400).json({
+                status: false,
+                message: 'Invalid image data'
+            });
         }
 
         // Ambil data gambar dari request
@@ -26,6 +29,9 @@ exports.predictImage = async (req, res) => {
     } catch (error) {
         // Tangani kesalahan internal server lainnya
         console.error('Prediction error:', error);
-        return res.status(500).json({ status: false, message: 'Internal Server Error' });
+        return res.status(500).json({
+            status: false,
+            message: 'Internal Server Error'
+        });
     }
 };
