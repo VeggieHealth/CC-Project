@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const validator = require('validator');
 const User = require('../models/user');
-const Token = require('../models/token'); // Import model Token
+const Token = require('../models/token');
 const {
     verifyToken
 } = require('../middlewares/authMiddleware');
@@ -18,6 +19,13 @@ exports.register = async (req, res) => {
             return res.status(400).json({
                 status: false,
                 message: 'invalid request argument'
+            });
+        }
+
+        if (!validator.isEmail(email)) {
+            return res.status(400).json({
+                status: false,
+                message: 'Invalid email format'
             });
         }
 

@@ -4,6 +4,7 @@ const sequelize = require('./config/config'); // Import konfigurasi Sequelize da
 const authRoutes = require('./routes/authRoutes');
 const vegetableRoutes = require('./routes/vegetableRoutes');
 const userRoutes = require('./routes/userRoutes');
+const predictionController = require('./controllers/predictionController'); // Import predictionController
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(bodyParser.json());
 app.use('/api', userRoutes);
 app.use('/api', authRoutes);
 app.use('/api', vegetableRoutes);
+app.post('/api/prediction', predictionController.uploadImage);
 
 // Inisialisasi koneksi ke database
 sequelize

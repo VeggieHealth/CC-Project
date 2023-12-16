@@ -1,34 +1,71 @@
-const mlModel = require('../path/to/your/ml_model'); // Menggantikan path dengan lokasi model machine learning Anda
+const fs = require('fs');
+const axios = require('axios');
+const multer = require('multer');
+const FormData = require('form-data');
+const upload = require('../middlewares/uploadMiddleware');
 
-exports.predictImage = async (req, res) => {
+exports.uploadImage = async (req, res) => {
     try {
-        // Pastikan data gambar ada dalam request
-        if (!req.body || !req.body.image) {
-            return res.status(400).json({
-                status: false,
-                message: 'Invalid image data'
-            });
-        }
+        upload(req, res, async function (err) {
+            if (err instanceof multer.MulterError) {
+                if (err.code === 'LIMIT_FILE_SIZE') {
+                    return res.status(400).json({
+                        status: false,
+                        message: 'File size is too large. Max size is 5MB'
+                    });
+                } else {
+                    return res.status(400).json({
+                        status: false,
+                        message: 'Error uploading file'
+                    });
+                }
+            } else if (err) {
+                return res.status(500).json({
+                    status: false,
+                    message: 'Internal Server Error'
+                });
+            }
 
-        // Ambil data gambar dari request
-        const image = req.body.image;
+            if (!req.file) {
+                return res.status(400).json({
+                    status: false,
+                    message: 'Invalid file uploaded'
+                });
+            }
 
-        // Lakukan pengecekan apakah tipe data gambar sesuai (pastikan tipe data gambar adalah yang diharapkan)
-        // Misalnya, jika menggunakan FormData, pastikan itu adalah tipe data yang diizinkan (jpeg, png, dll.)
-        // Lalu lanjutkan ke prediksi jika tipe datanya sesuai
+            // Mengambil buffer dari file yang diunggah ke dalam memori
+            const fileBuffer = req.file.buffer;
 
-        // Lakukan prediksi dengan model machine learning
-        const predictionResult = mlModel.predict(image);
+            // Handle file further as needed
+            // Example: Upload the image to an external service
+            try {
+                // Example: Uploading image to an external service
+                const formData = new FormData();
+                formData.append('file', fileBuffer, {
+                    filename: req.file.originalname
+                });
 
-        // Kirim hasil prediksi sebagai respons
-        return res.status(200).json({
-            status: true,
-            message: 'Prediction successful',
-            prediction: predictionResult,
+                const response = await axios.post('http://127.0.0.1:5000/predict', formData, {
+                    headers: formData.getHeaders()
+                });
+
+                // Assuming response.data contains prediction and accuracy
+                return res.status(200).json({
+                    status: true,
+                    message: 'Image uploaded and predicted',
+                    prediction: response.data.prediction,
+                    accuracy: response.data.accuracy
+                });
+            } catch (error) {
+                console.error(error);
+                return res.status(500).json({
+                    status: false,
+                    message: 'Error processing image'
+                });
+            }
         });
     } catch (error) {
-        // Tangani kesalahan internal server lainnya
-        console.error('Prediction error:', error);
+        console.error(error);
         return res.status(500).json({
             status: false,
             message: 'Internal Server Error'
