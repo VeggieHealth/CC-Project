@@ -19,6 +19,7 @@ exports.getVegetables = async (req, res) => {
 
         return res.status(200).json({
             status: true,
+            message: "Data retrieved successfully.",
             vegetables: formattedVegetables
         });
     } catch (error) {
@@ -56,6 +57,7 @@ exports.getVegetableById = async (req, res) => {
 
         return res.status(200).json({
             status: true,
+            message: "Data retrieved successfully.",
             vegetable: formattedVegetable
         });
     } catch (error) {

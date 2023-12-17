@@ -1,4 +1,3 @@
-const fs = require('fs');
 const axios = require('axios');
 const multer = require('multer');
 const FormData = require('form-data');
@@ -33,23 +32,18 @@ exports.uploadImage = async (req, res) => {
                 });
             }
 
-            // Mengambil buffer dari file yang diunggah ke dalam memori
             const fileBuffer = req.file.buffer;
 
-            // Handle file further as needed
-            // Example: Upload the image to an external service
             try {
-                // Example: Uploading image to an external service
                 const formData = new FormData();
                 formData.append('file', fileBuffer, {
                     filename: req.file.originalname
                 });
 
-                const response = await axios.post('http://127.0.0.1:5000/predict', formData, {
+                const response = await axios.post('https://flask-app-veggie-df3dj4kgla-et.a.run.app/predict', formData, {
                     headers: formData.getHeaders()
                 });
 
-                // Assuming response.data contains prediction and accuracy
                 return res.status(200).json({
                     status: true,
                     message: 'Image uploaded and predicted',

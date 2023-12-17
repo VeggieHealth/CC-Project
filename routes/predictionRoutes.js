@@ -5,6 +5,6 @@ const {
     verifyToken
 } = require('../middlewares/authMiddleware');
 
-router.post('/predict', verifyToken, predictionController.uploadImage);
+router.post('/prediction', verifyToken, predictionController.uploadImage);
 
 module.exports = router;

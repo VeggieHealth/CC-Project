@@ -9,11 +9,11 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({
-    storage: multer.memoryStorage(), // Menggunakan memory storage
+    storage: multer.memoryStorage(),
     fileFilter: fileFilter,
     limits: {
-        fileSize: 1024 * 1024 * 5 // Batasi ukuran file menjadi 5MB
+        fileSize: 1024 * 1024 * 5
     }
-}).single('file'); // Handle upload satu file
+}).single('file');
 
 module.exports = upload;
