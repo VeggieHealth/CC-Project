@@ -69,20 +69,12 @@ exports.uploadImage = async (req, res) => {
                     accuracy
                 } = response.data
 
-                if (accuracy < 45) {
+                if (accuracy < 70) {
                     return res.status(404).json({
                         status: false,
-                        message: 'Image not recognized'
+                        message: 'Vegetable not found, Please retake the image'
                     });
-                } else if (accuracy >= 45 && accuracy < 75) {
-                    return res.status(200).json({
-                        status: true,
-                        message: 'Possible vegetable detected',
-                        prediction,
-                        vegetableId,
-                        accuracy
-                    });
-                } else if (accuracy >= 75 && accuracy <= 100) {
+                } else if (accuracy >= 70 && accuracy <= 100) {
                     const vegetableDetail = await Vegetable.findByPk(vegetableId);
 
                     if (!vegetableDetail) {
@@ -101,7 +93,6 @@ exports.uploadImage = async (req, res) => {
                         vegetableDetail
                     });
                 }
-                // ... kode lainnya
             } catch (error) {
                 console.error(error);
                 return res.status(500).json({
