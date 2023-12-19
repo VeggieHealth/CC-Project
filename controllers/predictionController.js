@@ -1,6 +1,7 @@
 const axios = require('axios');
 const multer = require('multer');
 const FormData = require('form-data');
+const Vegetable = require('../models/vegetable');
 const upload = require('../middlewares/uploadMiddleware');
 
 exports.uploadImage = async (req, res) => {
@@ -11,6 +12,16 @@ exports.uploadImage = async (req, res) => {
                     return res.status(400).json({
                         status: false,
                         message: 'File size is too large. Max size is 5MB'
+                    });
+                } else if (err.code === 'LIMIT_FILE_COUNT') {
+                    return res.status(400).json({
+                        status: false,
+                        message: 'You can only upload one file at a time'
+                    });
+                } else if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+                    return res.status(400).json({
+                        status: false,
+                        message: 'Uploaded an invalid file type'
                     });
                 } else {
                     return res.status(400).json({
@@ -28,7 +39,15 @@ exports.uploadImage = async (req, res) => {
             if (!req.file) {
                 return res.status(400).json({
                     status: false,
-                    message: 'Invalid file uploaded'
+                    message: 'No file uploaded'
+                });
+            }
+
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            if (!allowedTypes.includes(req.file.mimetype)) {
+                return res.status(400).json({
+                    status: false,
+                    message: 'Invalid file type. Allowed types: JPG, JPEG, PNG'
                 });
             }
 
@@ -44,12 +63,45 @@ exports.uploadImage = async (req, res) => {
                     headers: formData.getHeaders()
                 });
 
-                return res.status(200).json({
-                    status: true,
-                    message: 'Image uploaded and predicted',
-                    prediction: response.data.prediction,
-                    accuracy: response.data.accuracy
-                });
+                const {
+                    prediction,
+                    vegetableId,
+                    accuracy
+                } = response.data
+
+                if (accuracy < 45) {
+                    return res.status(404).json({
+                        status: false,
+                        message: 'Image not recognized'
+                    });
+                } else if (accuracy >= 45 && accuracy < 75) {
+                    return res.status(200).json({
+                        status: true,
+                        message: 'Possible vegetable detected',
+                        prediction,
+                        vegetableId,
+                        accuracy
+                    });
+                } else if (accuracy >= 75 && accuracy <= 100) {
+                    const vegetableDetail = await Vegetable.findByPk(vegetableId);
+
+                    if (!vegetableDetail) {
+                        return res.status(404).json({
+                            status: false,
+                            message: 'Vegetable detail not found'
+                        });
+                    }
+
+                    return res.status(200).json({
+                        status: true,
+                        message: 'Image uploaded and predicted',
+                        prediction,
+                        vegetableId,
+                        accuracy,
+                        vegetableDetail
+                    });
+                }
+                // ... kode lainnya
             } catch (error) {
                 console.error(error);
                 return res.status(500).json({

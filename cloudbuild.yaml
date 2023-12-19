@@ -1,6 +1,12 @@
 steps:
   - name: "gcr.io/cloud-builders/docker"
-    args: ["build", "-t", "gcr.io/veggie-health/veggiehealth", "."]
+    args:
+      - "build"
+      - "-t"
+      - "gcr.io/veggie-health/veggiehealth"
+      - "-t"
+      - "gcr.io/veggie-health/veggiehealth:latest"
+      - "."
 
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "gcr.io/veggie-health/veggiehealth"]
