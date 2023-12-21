@@ -28,6 +28,8 @@ VeggieHealth API is built using cutting-edge technologies to ensure efficiency, 
 - **Google Cloud Run**: Serverless platform for deploying containerized applications.
 - **Google Container Registry**: A private Docker container storage on Google Cloud Platform.
 - **Google Cloud Build**: A service for building, testing, and deploying containerized applications on Google Cloud.
+- **Google Cloud SQL**: Managed database service for relational databases in the cloud.
+- **Google Cloud Storage**: Scalable cloud storage for storing data.
 
 ## Getting Started
 
